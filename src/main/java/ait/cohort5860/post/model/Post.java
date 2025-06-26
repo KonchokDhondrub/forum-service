@@ -28,10 +28,11 @@ public class Post {
     @Setter
     private String author;
     private LocalDateTime dateCreated = LocalDateTime.now();
+    @Setter
     @ManyToMany
     private Set<Tag> tags = new HashSet<>();
     private long likes = 0;
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     public Post(String title, String content, String author) {
