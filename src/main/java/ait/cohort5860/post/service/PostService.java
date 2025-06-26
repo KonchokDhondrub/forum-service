@@ -4,7 +4,7 @@ import ait.cohort5860.post.dto.NewCommentDto;
 import ait.cohort5860.post.dto.NewPostDto;
 import ait.cohort5860.post.dto.PostDto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 public interface PostService {
@@ -24,5 +24,5 @@ public interface PostService {
 
     Iterable<PostDto> findPostsByTags(Set<String> tags);
 
-    Iterable<PostDto> findPostsByTimePeriod(LocalDateTime dateFrom, LocalDateTime dateTo);
+    Iterable<PostDto> findPostsByTimePeriod(LocalDate dateFrom, LocalDate dateTo);
 }

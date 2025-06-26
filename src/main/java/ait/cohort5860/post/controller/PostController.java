@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 @RestController
@@ -26,6 +26,7 @@ public class PostController {
     @PatchMapping("/post/{postId}/like")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addLike(@PathVariable Long postId) {
+        postService.addLike(postId);
     }
 
     @PatchMapping("/post/{postId}")
@@ -59,7 +60,7 @@ public class PostController {
     }
 
     @GetMapping("/posts/period")
-    public Iterable<PostDto> findPostsByTimePeriod(@RequestParam LocalDateTime dateFrom,@RequestParam LocalDateTime dateTo) {
+    public Iterable<PostDto> findPostsByTimePeriod(@RequestParam LocalDate dateFrom, @RequestParam LocalDate dateTo) {
         return postService.findPostsByTimePeriod(dateFrom, dateTo);
     }
 }
