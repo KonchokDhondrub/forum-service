@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,6 +25,7 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+
     private final ModelMapper modelMapper;
 
     @Override
@@ -42,83 +41,90 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public void addLike(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         post.addLike();
-        postRepository.save(post);
+//        postRepository.save(post);
     }
 
     @Override
+    @Transactional
     public PostDto updatePost(Long postId, NewPostDto newPostDto) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        post.setTitle(newPostDto.getTitle());
-        post.getTags().clear();
-        handleTags(newPostDto.getTags(), post);
+        if (newPostDto.getTitle() != null) {
+            post.setTitle(newPostDto.getTitle());
+        }
+        if (newPostDto.getContent() != null) {
+            post.setContent(newPostDto.getContent());
+        }
+        if (newPostDto.getTags() != null) {
+            post.getTags().clear();
+            handleTags(newPostDto.getTags(), post); // Tags rewriter
+        }
         postRepository.save(post);
         return modelMapper.map(post, PostDto.class);
     }
 
     @Override
+    @Transactional
     public PostDto deletePost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        PostDto postDto = modelMapper.map(post, PostDto.class);
         postRepository.delete(post);
-        return postDto;
+        return modelMapper.map(post, PostDto.class);
     }
 
     @Override
+    @Transactional
     public PostDto addComment(Long postId, String author, NewCommentDto newCommentDto) {
-        if (newCommentDto == null) {
+        if (newCommentDto.getMessage() == null) {
             throw new IllegalArgumentException("Comment cannot be empty");
         }
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        Comment comment = new Comment(author, newCommentDto.getMessage());
-        comment.setPost(post);
-        post.addComment(comment);
-        postRepository.save(post);
+        post.addComment(new Comment(author, newCommentDto.getMessage(), post));
         return modelMapper.map(post, PostDto.class);
     }
 
     @Override
+    @Transactional
     public PostDto findPostById(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
-        return modelMapper.map(post, PostDto.class);
+        return modelMapper.map(postRepository.findById(postId).orElseThrow(PostNotFoundException::new), PostDto.class);
     }
 
     @Override
+    @Transactional
     public Iterable<PostDto> findPostByAuthor(String author) {
-        List<Post> posts = postRepository.findAllByAuthorIgnoreCase(author);
-        return posts.stream()
-                .map(post -> modelMapper.map(post, PostDto.class))
-                .toList();
-    }
-
-    @Override
-    public Iterable<PostDto> findPostsByTags(Set<String> tags) {
-        if (tags == null || tags.isEmpty()) {
+        if (author == null) {
             return Collections.emptyList();
         }
-        List<Post> posts = postRepository.findDistinctByTagsTagIn(tags);
-        return posts.stream()
+        return postRepository.findByAuthorIgnoreCase(author)
                 .map(post -> modelMapper.map(post, PostDto.class))
                 .toList();
     }
 
     @Override
-    public Iterable<PostDto> findPostsByTimePeriod(LocalDate dateFrom, LocalDate dateTo) {
-        LocalDateTime from = dateFrom.atStartOfDay();
-        LocalDateTime to = dateTo.atTime(23, 59, 59);
+    @Transactional
+    public Iterable<PostDto> findPostsByTags(Set<String> tags) {
+        return postRepository.findDistinctByTagsTagInIgnoreCase(tags)
+                .map(post -> modelMapper.map(post, PostDto.class))
+                .collect(Collectors.toSet());
+    }
 
-        if (from.isAfter(to)) {
+    @Override
+    @Transactional
+    public Iterable<PostDto> findPostsByTimePeriod(LocalDate dateFrom, LocalDate dateTo) {
+        if (dateFrom == null || dateTo == null) {
+            throw new IllegalArgumentException("dateFrom and dateTo must be not empty");
+        }
+        if (dateFrom.isAfter(dateTo)) {
             throw new IllegalArgumentException("dateFrom must not be after dateTo");
         }
 
-        List<Post> posts = postRepository.findAllByDateCreatedBetween(from, to);
-
-        return posts.stream()
+        return  postRepository.findAllByDateCreatedBetween(dateFrom.atStartOfDay(), dateTo.atTime(23, 59))
                 .map(post -> modelMapper.map(post, PostDto.class))
                 .toList();
     }
+
 
     private void handleTags(Set<String> tagNames, Post post) {
         if (tagNames != null && !tagNames.isEmpty()) {

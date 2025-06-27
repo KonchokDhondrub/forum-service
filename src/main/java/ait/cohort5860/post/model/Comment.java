@@ -30,6 +30,12 @@ public class Comment {
         this.message = message;
     }
 
+    public Comment(String user, String message, Post post) {
+        this.username = user;
+        this.message = message;
+        this.post = post;
+    }
+
     public void addLike() {
         likes++;
     }
