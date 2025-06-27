@@ -20,18 +20,28 @@ import java.util.Set;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private long id;
     @Setter
+    @Column(name = "title")
     private String title;
     @Setter
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
     @Setter
+    @Column(name = "author")
     private String author;
+    @Column(name = "date_created")
     private LocalDateTime dateCreated = LocalDateTime.now();
+    @Column(name = "likes")
+    private long likes = 0;
     @Setter
     @ManyToMany
+    @JoinTable(name = "posts_tags",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag"))
     private Set<Tag> tags = new HashSet<>();
-    private long likes = 0;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
