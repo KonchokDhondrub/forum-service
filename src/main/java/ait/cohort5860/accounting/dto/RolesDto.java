@@ -1,6 +1,5 @@
 package ait.cohort5860.accounting.dto;
 
-import ait.cohort5860.accounting.model.Role;
 import lombok.*;
 
 import java.util.Set;
@@ -9,10 +8,9 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {
+public class RolesDto {
     private String login;
-    private String firstName;
-    private String lastName;
+
     @Singular
     private Set<String> roles;
 }

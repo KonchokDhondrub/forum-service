@@ -1,5 +1,6 @@
 package ait.cohort5860.post.service;
 
+import ait.cohort5860.post.dao.CommentRepository;
 import ait.cohort5860.post.dao.PostRepository;
 import ait.cohort5860.post.dao.TagRepository;
 import ait.cohort5860.post.dto.NewCommentDto;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+    private final CommentRepository commentRepository;
 
     private final ModelMapper modelMapper;
 
@@ -77,13 +79,25 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDto addComment(Long postId, String author, NewCommentDto newCommentDto) {
+        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         if (newCommentDto.getMessage() == null) {
             throw new IllegalArgumentException("Comment cannot be empty");
         }
-        Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         post.addComment(new Comment(author, newCommentDto.getMessage(), post));
         return modelMapper.map(post, PostDto.class);
     }
+
+//    @Override
+//    @Transactional
+//    public PostDto addComment(Long id, String author, NewCommentDto newCommentDto) {
+//        Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
+//        Comment comment = new Comment(author, newCommentDto.getMessage());
+//        comment.setPost(post);
+//        post.addComment(comment);
+//        //    commentRepository.save(comment);
+//        return modelMapper.map(post, PostDto.class);
+//    }
+
 
     @Override
     @Transactional
@@ -120,7 +134,7 @@ public class PostServiceImpl implements PostService {
             throw new IllegalArgumentException("dateFrom must not be after dateTo");
         }
 
-        return  postRepository.findAllByDateCreatedBetween(dateFrom.atStartOfDay(), dateTo.atTime(23, 59))
+        return postRepository.findAllByDateCreatedBetween(dateFrom.atStartOfDay(), dateTo.atTime(23, 59))
                 .map(post -> modelMapper.map(post, PostDto.class))
                 .toList();
     }
