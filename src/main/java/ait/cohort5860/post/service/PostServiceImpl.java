@@ -87,18 +87,6 @@ public class PostServiceImpl implements PostService {
         return modelMapper.map(post, PostDto.class);
     }
 
-//    @Override
-//    @Transactional
-//    public PostDto addComment(Long id, String author, NewCommentDto newCommentDto) {
-//        Post post = postRepository.findById(id).orElseThrow(PostNotFoundException::new);
-//        Comment comment = new Comment(author, newCommentDto.getMessage());
-//        comment.setPost(post);
-//        post.addComment(comment);
-//        //    commentRepository.save(comment);
-//        return modelMapper.map(post, PostDto.class);
-//    }
-
-
     @Override
     @Transactional
     public PostDto findPostById(Long postId) {
