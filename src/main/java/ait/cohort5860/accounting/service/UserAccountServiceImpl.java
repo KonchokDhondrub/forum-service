@@ -10,8 +10,10 @@ import ait.cohort5860.accounting.model.UserAccount;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +64,11 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
 
     @Override
     public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
+        try {
+            Role.valueOf(role.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid role: " + role.toUpperCase());
+        }
         UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
         try {
             if (isAddRole) {
@@ -79,7 +86,8 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     @Override
     public void changePassword(String login, String newPassword) {
         UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
-        userAccount.setPassword(newPassword);
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        userAccount.setPassword(encodedPassword);
         userAccountRepository.save(userAccount);
     }
 
