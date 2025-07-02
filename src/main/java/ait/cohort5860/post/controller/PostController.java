@@ -51,7 +51,7 @@ public class PostController {
 
     @GetMapping("/posts/author/{user}")
     public Iterable<PostDto> findPostByAuthor(@PathVariable String user) {
-        return postService.findPostByAuthor(user);
+        return postService.findPostsByAuthor(user);
     }
 
     @GetMapping("/posts/tags")

@@ -20,7 +20,7 @@ public interface PostService {
 
     PostDto findPostById(Long postId);
 
-    Iterable<PostDto> findPostByAuthor(String author);
+    Iterable<PostDto> findPostsByAuthor(String author);
 
     Iterable<PostDto> findPostsByTags(Set<String> tags);
 

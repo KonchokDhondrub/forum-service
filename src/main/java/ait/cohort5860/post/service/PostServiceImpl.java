@@ -10,6 +10,7 @@ import ait.cohort5860.post.dto.exceptions.PostNotFoundException;
 import ait.cohort5860.post.model.Comment;
 import ait.cohort5860.post.model.Post;
 import ait.cohort5860.post.model.Tag;
+import ait.cohort5860.post.service.logging.PostLogger;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    @PostLogger
     public PostDto addPost(String author, NewPostDto newPostDto) {
         Post post = new Post(newPostDto.getTitle(), newPostDto.getContent(), author);
 
@@ -44,14 +46,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    @PostLogger
     public void addLike(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         post.addLike();
-//        postRepository.save(post);
     }
 
     @Override
     @Transactional
+    @PostLogger
     public PostDto updatePost(Long postId, NewPostDto newPostDto) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         if (newPostDto.getTitle() != null) {
@@ -70,6 +73,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    @PostLogger
     public PostDto deletePost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         postRepository.delete(post);
@@ -78,6 +82,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    @PostLogger
     public PostDto addComment(Long postId, String author, NewCommentDto newCommentDto) {
         Post post = postRepository.findById(postId).orElseThrow(PostNotFoundException::new);
         if (newCommentDto.getMessage() == null) {
@@ -89,13 +94,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    @PostLogger
     public PostDto findPostById(Long postId) {
         return modelMapper.map(postRepository.findById(postId).orElseThrow(PostNotFoundException::new), PostDto.class);
     }
 
     @Override
     @Transactional
-    public Iterable<PostDto> findPostByAuthor(String author) {
+    public Iterable<PostDto> findPostsByAuthor(String author) {
         if (author == null) {
             return Collections.emptyList();
         }

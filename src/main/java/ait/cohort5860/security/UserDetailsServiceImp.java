@@ -19,7 +19,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("Getting user details of: " + username);
+//        System.out.println("Getting user details of: " + username);
         UserAccount userAccount = userAccountRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException(username + ": User not found"));
         Collection<String> roles = userAccount.getRoles()
                 .stream()
