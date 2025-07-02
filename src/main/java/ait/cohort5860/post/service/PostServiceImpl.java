@@ -11,6 +11,7 @@ import ait.cohort5860.post.model.Comment;
 import ait.cohort5860.post.model.Post;
 import ait.cohort5860.post.model.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+//@Slf4j(topic = "Post Service")
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
@@ -90,6 +92,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDto findPostById(Long postId) {
+//        log.info("Finding post by id: {}", postId);
         return modelMapper.map(postRepository.findById(postId).orElseThrow(PostNotFoundException::new), PostDto.class);
     }
 
