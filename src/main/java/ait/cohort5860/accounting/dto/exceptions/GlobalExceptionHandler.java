@@ -14,6 +14,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<?> handleResponseStatusException(ResponseStatusException ex, HttpServletRequest request) {
+        assert ex.getReason() != null;
         Map<String, Object> body = Map.of(
                 "timestamp", ZonedDateTime.now(),
                 "status", ex.getStatusCode().value(),

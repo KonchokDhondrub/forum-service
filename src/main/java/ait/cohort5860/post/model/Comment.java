@@ -31,11 +31,6 @@ public class Comment {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    public Comment(String user, String message) {
-        this.username = user;
-        this.message = message;
-    }
-
     public Comment(String user, String message, Post post) {
         this.username = user;
         this.message = message;

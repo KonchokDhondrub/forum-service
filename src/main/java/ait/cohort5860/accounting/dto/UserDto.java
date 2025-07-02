@@ -1,6 +1,5 @@
 package ait.cohort5860.accounting.dto;
 
-import ait.cohort5860.accounting.model.Role;
 import lombok.*;
 
 import java.util.Set;
