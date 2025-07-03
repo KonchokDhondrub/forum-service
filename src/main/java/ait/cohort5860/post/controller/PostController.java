@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.Set;
 
+//@CrossOrigin(origins = "*", allowedHeaders = "*") // If no Spring-Security
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/forum")
