@@ -5,6 +5,7 @@ import ait.cohort5860.post.dto.NewPostDto;
 import ait.cohort5860.post.dto.PostDto;
 import ait.cohort5860.post.service.PostService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class PostController {
     }
 
     @PatchMapping("/post/{postId}")
-    public PostDto updatePost(@PathVariable Long postId, @RequestBody @Valid NewPostDto newPostDto) {
+    public PostDto updatePost(@PathVariable Long postId, @RequestBody NewPostDto newPostDto) {
         return postService.updatePost(postId, newPostDto);
     }
 
@@ -62,8 +63,8 @@ public class PostController {
 
     @GetMapping("/posts/period")
     public Iterable<PostDto> findPostsByTimePeriod(
-            @RequestParam(defaultValue = "0001-01-01") LocalDate dateFrom,
-            @RequestParam(defaultValue = "#{T(java.time.LocalDate).now()}") LocalDate dateTo) {
+            @RequestParam(defaultValue = "0001-01-01") @NotNull(message = "Date 'to' required") LocalDate dateFrom,
+            @RequestParam(defaultValue = "#{T(java.time.LocalDate).now()}") @NotNull(message = "Date 'to' required") LocalDate dateTo) {
         return postService.findPostsByTimePeriod(dateFrom, dateTo);
     }
 
