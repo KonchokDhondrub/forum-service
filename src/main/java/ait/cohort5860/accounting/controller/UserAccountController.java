@@ -68,4 +68,9 @@ public class UserAccountController {
         }
         return userAccountService.getUserByLogin(login);
     }
+
+    @PostMapping("/email")
+    public void sendEmail(@RequestBody @Valid EmailDto emailDto) {
+        userAccountService.sendEmail(emailDto);
+    }
 }

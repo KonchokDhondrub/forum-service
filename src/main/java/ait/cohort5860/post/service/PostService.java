@@ -25,4 +25,6 @@ public interface PostService {
     Iterable<PostDto> findPostsByTags(Set<String> tags);
 
     Iterable<PostDto> findPostsByTimePeriod(LocalDate dateFrom, LocalDate dateTo);
+
+
 }

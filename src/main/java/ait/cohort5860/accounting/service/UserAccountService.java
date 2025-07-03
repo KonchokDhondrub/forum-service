@@ -17,4 +17,6 @@ public interface UserAccountService {
     void changePassword(String login, String newPassword);
 
     UserDto getUserByLogin(String login);
+
+    void sendEmail(EmailDto emailDto);
 }

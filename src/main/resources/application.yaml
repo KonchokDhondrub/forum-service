@@ -4,11 +4,22 @@ spring:
   datasource: #PostgreSQL by Aiven.io
     url: jdbc:postgresql://cohort5860-cohort5860.h.aivencloud.com:20320/defaultdb
     username: ${AIVEN_USER}
-    password: ${AIVEN_PASSWD}
+    password: ${AIVEN_PASSWORD}
   jpa: #Hibernate
     hibernate:
       ddl-auto: none
     show-sql: true
   data:
     mongodb:
-      uri: mongodb+srv://${MONGO_USER}:${MONGO_PASSW}@cluster0.cjojdry.mongodb.net/cohort5860?retryWrites=true&w=majority&appName=Cluster0
+      uri: mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@cluster0.cjojdry.mongodb.net/cohort5860?retryWrites=true&w=majority&appName=Cluster0
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

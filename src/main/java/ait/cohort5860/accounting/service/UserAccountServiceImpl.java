@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +23,7 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     private final UserAccountRepository userAccountRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
 
     @Override
     public UserDto registerUser(UserRegisterDto userRegisterDto) {
@@ -95,6 +98,15 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     public UserDto getUserByLogin(String login) {
         UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
         return modelMapper.map(userAccount, UserDto.class);
+    }
+
+    @Override
+    public void sendEmail(EmailDto emailDto) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(emailDto.getTo());
+        message.setSubject(emailDto.getSubject());
+        message.setText(emailDto.getMessage());
+        mailSender.send(message);
     }
 
     @Override
