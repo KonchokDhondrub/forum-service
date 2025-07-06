@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "ait.cohort5860.post.dao")
+@EnableJpaRepositories(basePackages = {
+        "ait.cohort5860.post.dao",
+        "ait.cohort5860.fileTransporter.dao"})
 @EnableTransactionManagement
 public class JpaConfig {
 }

@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -39,7 +40,7 @@ public class SecurityConfiguration {
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name"))
                 .requestMatchers(HttpMethod.DELETE, "/account/user/{login}")
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name or hasRole('ADMINISTRATOR')"))
-                .requestMatchers(HttpMethod.POST, "/forum/post/{author}")
+                .requestMatchers(HttpMethod.POST, "/forum/post/{author}", "/file/upload")
                     .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
                 .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}")
                     .access(((authentication, context) ->
@@ -64,9 +65,9 @@ public class SecurityConfiguration {
     @Bean
     UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://*"));
+        configuration.setAllowedOrigins(List.of("https://*"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD", "TRACE"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
