@@ -1,6 +1,6 @@
 package ait.cohort5860.post.service;
 
-import ait.cohort5860.post.dao.CommentRepository;
+import ait.cohort5860.fileTransporter.dto.FileResponseDto;
 import ait.cohort5860.post.dao.PostRepository;
 import ait.cohort5860.post.dao.TagRepository;
 import ait.cohort5860.post.dto.NewCommentDto;

@@ -12,5 +12,8 @@ import lombok.Setter;
 public class FileResponseDto {
     private String filename;
     private String downloadUrl;
+    private String contentType;
+    private long size;
+
 }
 

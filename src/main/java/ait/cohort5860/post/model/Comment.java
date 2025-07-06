@@ -26,6 +26,7 @@ public class Comment {
     private LocalDateTime dateCreated = LocalDateTime.now();
     @Column(name = "likes")
     private long likes = 0;
+
     @ManyToOne
     @Setter
     @JoinColumn(name = "post_id", nullable = false)

@@ -32,26 +32,43 @@ public class SecurityConfiguration {
         http.cors(Customizer.withDefaults());
 //        http.exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException) -> response.sendError(401)));
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/account/register", "/forum/posts/**")
+                .requestMatchers("/account/register", "/forum/posts/**", "/files/download/**")
                     .permitAll()
+
                 .requestMatchers("/account/user/{login}/role/{role}")
                     .hasRole(Role.ADMINISTRATOR.name())
+
                 .requestMatchers(HttpMethod.PATCH, "/account/user/{login}", "/forum/post/{id}/comment/{login}")
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name"))
+
                 .requestMatchers(HttpMethod.DELETE, "/account/user/{login}")
                     .access(new WebExpressionAuthorizationManager("#login == authentication.name or hasRole('ADMINISTRATOR')"))
-                .requestMatchers(HttpMethod.POST, "/forum/post/{author}", "/file/upload")
+
+                .requestMatchers(HttpMethod.POST, "/forum/post/{author}")
                     .access(new WebExpressionAuthorizationManager("#author == authentication.name"))
+
                 .requestMatchers(HttpMethod.PATCH, "/forum/post/{id}")
                     .access(((authentication, context) ->
                         new AuthorizationDecision(webSecurity.checkPostAuthor(context.getVariables().get("id"), authentication.get().getName()))))
-                .requestMatchers(HttpMethod.DELETE, "/forum/post/{id}")
+
+                .requestMatchers(HttpMethod.POST, "/files/upload/{id}")
                     .access((authentication, context) -> {
+                    boolean isFileAuthor = webSecurity.checkFilePostAuthor(context.getVariables().get("id"),
+                            authentication.get().getName());
+                    boolean isModerator = context.getRequest().isUserInRole(Role.MODERATOR.name());
+                    return new AuthorizationDecision(isFileAuthor || isModerator);
+                })
+
+                .requestMatchers(HttpMethod.DELETE, "/forum/post/{id}", "/files/delete/{fileId}")
+                    .access((authentication, context) -> {
+                    boolean isFileAuthor = webSecurity.checkFilePostAuthor(context.getVariables().get("fileId"),
+                                authentication.get().getName());
                     boolean isAuthor = webSecurity.checkPostAuthor(context.getVariables().get("id"),
                             authentication.get().getName());
                     boolean isModerator = context.getRequest().isUserInRole(Role.MODERATOR.name());
-                    return new AuthorizationDecision(isAuthor || isModerator);
+                    return new AuthorizationDecision(isAuthor || isFileAuthor || isModerator);
                 })
+
                 .anyRequest()
                     .authenticated());
         return http.build();

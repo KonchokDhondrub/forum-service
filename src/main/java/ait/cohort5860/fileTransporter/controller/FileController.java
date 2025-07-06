@@ -1,5 +1,6 @@
 package ait.cohort5860.fileTransporter.controller;
 
+import ait.cohort5860.fileTransporter.dao.FileRepository;
 import ait.cohort5860.fileTransporter.dto.FileResponseDto;
 import ait.cohort5860.fileTransporter.model.FileEntity;
 import ait.cohort5860.fileTransporter.service.FileService;
@@ -16,13 +17,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class FileController {
 
     private final FileService fileService;
+    private final FileRepository fileRepository;
 
-    public FileController(FileService fileService) {
+    public FileController(FileService fileService, FileRepository fileRepository) {
         this.fileService = fileService;
+        this.fileRepository = fileRepository;
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<FileResponseDto> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/upload/{postId}")
+    public ResponseEntity<FileResponseDto> uploadFile(@PathVariable Long postId, @RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Файл не должен быть пустым");
         }
@@ -40,19 +43,26 @@ public class FileController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Недопустимый формат файла");
         }
 
-        FileResponseDto dto = fileService.storeFile(file);
+        FileResponseDto dto = fileService.storeFile(postId, file);
         return ResponseEntity.ok(dto);
     }
 
 
-    @GetMapping("/download/{id}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable Long id) {
-        FileEntity file = fileService.getFile(id);
+    @GetMapping("/download/{fileId}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable Long fileId) {
+        FileEntity file = fileService.getFile(fileId);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(file.getData());
     }
+
+    @DeleteMapping("/delete/{fileId}")
+    public ResponseEntity<FileResponseDto> deleteFile(@PathVariable Long fileId) {
+        FileResponseDto dto = fileService.deleteFile(fileId);
+        return ResponseEntity.ok(dto);
+    }
+
 }
 

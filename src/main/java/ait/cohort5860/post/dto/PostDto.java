@@ -1,5 +1,6 @@
 package ait.cohort5860.post.dto;
 
+import ait.cohort5860.fileTransporter.dto.FileResponseDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,4 +24,6 @@ public class PostDto {
     private Long likes;
     @Singular
     private List<CommentDto> comments;
+    @Singular
+    private List<FileResponseDto> files;
 }

@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: 001-upload-file
       author: kd
       changes:
         - createTable:
@@ -23,3 +23,10 @@ databaseChangeLog:
                   type: BLOB
                   constraints:
                     nullable: false
+              - column:
+                  name: post_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_files_posts
+                    references: posts(id)
