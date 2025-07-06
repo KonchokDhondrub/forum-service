@@ -47,10 +47,10 @@ public class FileController {
         return ResponseEntity.ok(dto);
     }
 
-
     @GetMapping("/download/{fileId}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable Long fileId) {
-        FileEntity file = fileService.getFile(fileId);
+        FileEntity file = fileRepository.findById(fileId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Файл не найден"));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")

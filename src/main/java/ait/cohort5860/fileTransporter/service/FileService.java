@@ -7,7 +7,6 @@ import ait.cohort5860.post.dao.PostRepository;
 import ait.cohort5860.post.dto.exceptions.PostNotFoundException;
 import ait.cohort5860.post.model.Post;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +20,6 @@ import java.io.IOException;
 public class FileService {
     private final FileRepository fileRepository;
     private final PostRepository postRepository;
-    private final ModelMapper modelMapper;
 
     @Transactional
     public FileResponseDto storeFile(Long postId, MultipartFile multipartFile) {
@@ -46,13 +44,6 @@ public class FileService {
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Не удалось сохранить файл", e);
         }
-    }
-
-
-    @Transactional
-    public FileEntity getFile(Long id) {
-        return fileRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Файл не найден"));
     }
 
     @Transactional
